@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Forever With Saloni 💍</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;height:100vh;font-family:'Segoe UI',sans-serif;overflow:hidden;
+background:
+linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),
+url('saloni.jpeg') no-repeat center/cover;
+}
+
+.container{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+position:relative;
+z-index:2;
+}
+
+.card{
+background:rgba(255,255,255,.93);
+padding:40px;
+border-radius:25px;
+box-shadow:0 20px 40px rgba(0,0,0,.35);
+text-align:center;
+max-width:480px;
+width:90%;
+animation:fade 1s ease;
+}
+
+@keyframes fade{
+from{opacity:0;transform:scale(.9)}
+to{opacity:1}
+}
+
+h1,h2{color:#e91e63}
+p{color:#444;font-size:17px}
+
+button{
+padding:14px 26px;
+font-size:16px;
+border:none;
+border-radius:30px;
+margin:8px;
+color:#fff;
+cursor:pointer;
+background:#ff4081;
+transition:.2s;
+}
+button:hover{transform:scale(1.08)}
+
+.hidden{display:none}
+
+.timer{
+margin-top:15px;
+font-size:18px;
+font-weight:bold;
+color:#444;
+}
+
+.big{
+font-size:22px;
+color:#e91e63;
+font-weight:bold;
+}
+
+.mr-mrs{
+margin-top:25px;
+font-size:34px;
+font-weight:bold;
+color:#e91e63;
+text-shadow:0 0 15px #ff4081;
+animation:glow 1.5s infinite alternate;
+}
+
+@keyframes glow{
+from{text-shadow:0 0 10px #ff4081}
+to{text-shadow:0 0 25px #e91e63}
+}
+
+canvas{
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+pointer-events:none;
+z-index:1;
+}
+
+audio{display:none}
+</style>
+</head>
+
+<body>
+
+<!-- BACKGROUND MUSIC (starts on first click) -->
+<audio id="bgMusic" loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<canvas id="fireworks"></canvas>
+
+<div class="container">
+
+<!-- PAGE 1 -->
+<div class="card" id="p1">
+<h1>💖 Saloni Devi Thakur 💖</h1>
+<h2>Will You Be My Wife? 💍</h2>
+<p>You are my happiness, my peace, my forever.</p>
+<p style="font-size:14px;color:#777">🔊 Tap Yes to start our song</p>
+<button onclick="next(1)">Yes 💍</button>
+<button onclick="next(1)">Yes Only 😄</button>
+</div>
+
+<!-- PAGE 2 -->
+<div class="card hidden" id="p2">
+<h2>💞 Memory Check 💞</h2>
+<p><b>When did we first meet?</b></p>
+<button onclick="wrong(this)">5 June</button>
+<button onclick="next(2)">25 July ❤️</button>
+<button onclick="wrong(this)">10 October</button>
+<button onclick="wrong(this)">23 July</button>
+</div>
+
+<!-- PAGE 3 -->
+<div class="card hidden" id="p3">
+<h2>🎶 Our Song 🎶</h2>
+<p><b>What is our song?</b></p>
+<button onclick="wrong(this)">Tum Hi Ho</button>
+<button onclick="next(3)">Pal Pal Dil Ke Paas 💕</button>
+<button onclick="wrong(this)">Rab Ne Bana Di Jodi</button>
+<button onclick="wrong(this)">Samjhawan</button>
+</div>
+
+<!-- PAGE 4 -->
+<div class="card hidden" id="p4">
+<h2>💋 My Favourite Thing 💋</h2>
+<p><b>What is my most favourite thing to do with you?</b></p>
+<button onclick="wrong(this)">Cuddling</button>
+<button onclick="next(4)">Kissing 💋</button>
+<button onclick="wrong(this)">Hugging</button>
+<button onclick="wrong(this)">Sleeping</button>
+</div>
+
+<!-- PAGE 5 -->
+<div class="card hidden" id="p5">
+<h2>⏳ Our Forever Time ⏳</h2>
+<p class="big">We have already spent 💖</p>
+<div class="timer" id="timer"></div>
+<p class="big">And 60 Years More To Go 💍✨</p>
+<div class="mr-mrs">Mr & Mrs Barnwal 💖</div>
+</div>
+
+</div>
+
+<script>
+/* MUSIC + PAGE FLOW */
+let musicStarted=false;
+function next(n){
+  if(!musicStarted){
+    document.getElementById("bgMusic").play().catch(()=>{});
+    musicStarted=true;
+  }
+  document.getElementById("p"+n).classList.add("hidden");
+  document.getElementById("p"+(n+1)).classList.remove("hidden");
+  if(n===4) startFireworks();
+}
+
+function wrong(btn){
+  btn.style.background="#ccc";
+  btn.style.cursor="not-allowed";
+}
+
+/* LIVE TIMER */
+const startDate=new Date("July 9, 2025 00:00:00").getTime();
+function updateTimer(){
+  const now=new Date().getTime();
+  const diff=now-startDate;
+
+  const days=Math.floor(diff/(1000*60*60*24));
+  const hours=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+  const minutes=Math.floor((diff%(1000*60*60))/(1000*60));
+  const seconds=Math.floor((diff%(1000*60))/1000);
+
+  document.getElementById("timer").innerHTML=
+  `${days} Days ❤️ ${hours} Hours 💖 ${minutes} Minutes 💕 ${seconds} Seconds 💍`;
+}
+setInterval(updateTimer,1000);
+
+/* FIREWORKS */
+const canvas=document.getElementById("fireworks");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+let particles=[];
+
+function startFireworks(){
+  setInterval(()=>{
+    const x=Math.random()*canvas.width;
+    const y=Math.random()*canvas.height/2;
+    for(let i=0;i<60;i++){
+      particles.push({
+        x,y,
+        vx:(Math.random()-0.5)*6,
+        vy:(Math.random()-0.5)*6,
+        life:60,
+        color:`hsl(${Math.random()*360},100%,60%)`
+      });
+    }
+  },800);
+}
+
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach((p,i)=>{
+    p.x+=p.vx;
+    p.y+=p.vy;
+    p.life--;
+    ctx.fillStyle=p.color;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,3,0,Math.PI*2);
+    ctx.fill();
+    if(p.life<=0) particles.splice(i,1);
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+
+</body>
+</html>
